@@ -17,15 +17,15 @@ window.CG_REASONS = [
 
 /* 처음 목표 */
 window.CG_DEFAULT_GOAL = {
-  title: "우리 반 첫 번째 목표",
-  reward: "체육 시간 한 번 더!",
-  rewardE: "⚽",
+  title: "",     // 비워 두면 화면에서 선생님이 적어요
+  reward: "",   // 비워 두면 화면에서 선생님이 적어요
+  rewardE: "🎁",
   target: 50,
   theme: "jar"
 };
 
 /* 보상 그림 고르기 */
-window.CG_REWARD_EMOJIS = ["⚽", "🎬", "🍿", "🎮", "🎨", "🎵", "🧁", "🍦", "🏃", "📖", "🎲", "🪁", "🎉", "🏕️", "🧸", "🍕"];
+window.CG_REWARD_EMOJIS = ["🎁", "⚽", "🎬", "🍿", "🎮", "🎨", "🎵", "🧁", "🍦", "🏃", "📖", "🎲", "🪁", "🎉", "🏕️", "🧸", "🍕"];
 
 /* 게이지 모양 */
 window.CG_THEMES = {

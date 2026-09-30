@@ -32,6 +32,7 @@
   function daysSince(t) { return Math.max(1, Math.floor((Date.now() - t) / 86400000) + 1); }
   function stamp(t) { var d = new Date(t); return (d.getMonth() + 1) + "/" + d.getDate() + " " + d.getHours() + ":" + String(d.getMinutes()).padStart(2, "0"); }
   function dateStr(t) { var d = new Date(t); return d.getFullYear() + "." + (d.getMonth() + 1) + "." + d.getDate(); }
+  function rewardText(r) { return r && String(r).trim() ? r : ""; }
   function isToday(t) { return new Date(t).toDateString() === new Date().toDateString(); }
   var toastEl;
   function toast(msg, ms) {
@@ -58,8 +59,10 @@
     app.innerHTML =
       '<div class="layout">' +
         '<section class="card goal-card">' +
-          '<h1 class="goal-title">' + esc(S.goal.title) + "</h1>" +
-          '<div class="reward-pill">' + S.goal.rewardE + " 보상: " + esc(S.goal.reward) + "</div>" +
+          '<h1 class="goal-title">' + esc(S.goal.title || "우리 반 목표") + "</h1>" +
+          (rewardText(S.goal.reward)
+            ? '<div class="reward-pill">' + S.goal.rewardE + " 보상: " + esc(S.goal.reward) + "</div>"
+            : '<button type="button" class="reward-pill" id="setReward" style="border:2px dashed #f2b27a;cursor:pointer">🎁 보상은 아이들과 약속해서 적어 주세요 ✏️</button>') +
           '<div class="visual" id="visual"></div>' +
           '<div class="gauge"><div class="gauge-track"><div class="gauge-fill" id="fill" style="width:' + pct() + '%"></div><div class="gauge-ticks">' +
             [25, 50, 75].map(function (p) { return '<span style="left:' + p + '%"></span>'; }).join("") + "</div></div>" +
@@ -89,6 +92,7 @@
       document.getElementById("cLabel").value = "";
     };
     document.getElementById("undo").onclick = undo;
+    var sr = document.getElementById("setReward"); if (sr) sr.onclick = function () { settings(false); setTimeout(function () { var i = document.getElementById("gReward"); if (i) i.focus(); }, 50); };
     drawVisual(0);
     drawLog(false);
     updateNums();
@@ -236,7 +240,7 @@
     openModal(
       '<div class="huge">' + S.goal.rewardE + '</div><div class="celebrate-title">🎉 목표 달성! 🎉</div>' +
       '<p class="muted" style="margin:0">우리 반이 ' + days + "일 동안 힘을 모아 " + S.points + "점을 모았어요!</p>" +
-      '<div class="celebrate-reward">🎁 ' + esc(S.goal.reward) + "</div>" +
+      '<div class="celebrate-reward">🎁 ' + esc(rewardText(S.goal.reward) || "우리가 약속한 보상") + "</div>" +
       '<div class="btn-row"><button type="button" class="primary" id="toHall">🏆 명예의 전당에 올리고 새 목표 정하기</button>' +
       '<button type="button" class="secondary" id="later">나중에 할게요</button></div>', true);
     document.getElementById("toHall").onclick = function () {
@@ -282,7 +286,7 @@
         (isNew ? '<p class="muted" style="margin:0 0 10px">반 친구들과 함께 다음 목표와 보상을 정해 보세요!</p>' : "") +
         '<div class="form">' +
           '<label>목표 이름<input id="gTitle" maxlength="30" value="' + esc(g.title) + '" placeholder="예: 우리 반 두 번째 목표"></label>' +
-          '<label>보상<input id="gReward" maxlength="30" value="' + esc(g.reward) + '" placeholder="예: 영화 보는 날"></label>' +
+          '<label>보상 <span class="hint">학급 회의에서 아이들과 함께 정해 보세요. 비워 두면 나중에 적을 수 있어요.</span><input id="gReward" maxlength="30" value="' + esc(g.reward) + '" placeholder="아이들과 약속한 보상을 적어요 (예: 영화 보는 날)"></label>' +
           '<label>보상 그림' + chips(window.CG_REWARD_EMOJIS, g.rewardE, "emo") + "</label>" +
           '<label>목표 점수 <span class="hint">구슬 병은 목표 점수만큼 구슬이 들어가요</span>' +
             '<div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' + chips([20, 30, 50, 100, 150, 200], g.target, "tg", true) +
@@ -320,7 +324,7 @@
       document.getElementById("saveBtn").onclick = function () {
         keep();
         g.title = g.title.trim() || (isNew ? "우리 반 " + (S.hall.length + 1) + "번째 목표" : "우리 반 목표");
-        g.reward = g.reward.trim() || "선생님이 주는 깜짝 선물";
+        g.reward = g.reward.trim();
         g.target = Math.max(5, Math.min(500, g.target));
         reasons = reasons.filter(function (r) { return String(r.label).trim(); }).map(function (r) { return { e: String(r.e).trim() || "⭐", label: String(r.label).trim(), pts: Math.max(1, Math.min(50, r.pts)) }; });
         if (!reasons.length) reasons = JSON.parse(JSON.stringify(window.CG_REASONS));
@@ -365,7 +369,7 @@
   function hall() {
     var list = S.hall.slice().reverse().map(function (h, i) {
       var days = Math.max(1, Math.floor((h.end - h.start) / 86400000) + 1);
-      return '<div class="hi"><span class="he">' + h.rewardE + '</span><div><div class="ht">' + (S.hall.length - i) + ". " + esc(h.title) + '</div><div class="muted small">🎁 ' + esc(h.reward) + " · " + h.points + "점</div></div>" +
+      return '<div class="hi"><span class="he">' + h.rewardE + '</span><div><div class="ht">' + (S.hall.length - i) + ". " + esc(h.title) + '</div><div class="muted small">🎁 ' + esc(rewardText(h.reward) || "약속한 보상") + " · " + h.points + "점</div></div>" +
         '<div class="hd">' + dateStr(h.end) + "<br>" + days + "일 걸림</div></div>";
     }).join("");
     openModal("<h2>🏆 우리 반 명예의 전당</h2>" +
@@ -390,6 +394,9 @@
     }
   });
 
+  var firstRun = false;
+  try { firstRun = !localStorage.getItem(KEY); } catch (e) {}
   render();
+  if (firstRun) setTimeout(function () { settings(false); }, 300);
   if (S.celebrated && pct() >= 100) setTimeout(celebrate, 400);
 })();
