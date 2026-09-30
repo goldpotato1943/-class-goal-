@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>우리 반 목표 게이지</title>
+  <meta name="description" content="반 전체가 함께 점수를 모아 게이지를 채우면 보상을 받는 학급 운영 도구">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🫙</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">🎯 우리 반 목표 게이지</div>
+    <div class="top-right">
+      <button type="button" class="ghost" id="btnShow" title="버튼을 숨기고 게이지만 크게 보여요">📺 발표 모드</button>
+      <button type="button" class="ghost" id="btnHall">🏆 명예의 전당</button>
+      <button type="button" class="ghost" id="btnSet">⚙️ 설정</button>
+    </div>
+  </header>
+  <main id="app"></main>
+  <div class="modal" id="modal" hidden><div class="modal-card" id="modalCard" role="dialog" aria-modal="true"></div></div>
+  <footer class="foot">점수는 이 컴퓨터(브라우저)에 저장돼요 · ⚙️ 설정에서 백업 파일을 받아 둘 수 있어요</footer>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
